@@ -6,6 +6,15 @@ class ArimaModel(object):
         self.series = series
 
     def transform_split(self, train_composition=0.7):
+        """
+        Split series into train and test data
+        :param
+            train_composition : (float > 0) percentage or index
+        :return :
+            training : Array of training data
+            test : Array of testing data
+            train_size : training size
+        """
         if train_composition > 1 or train_composition < 0:
             raise Exception('Train composition must be between 0-1')
         train_size = int(len(self.series) * train_composition)
@@ -13,16 +22,19 @@ class ArimaModel(object):
         test = self.series[train_size:]
         return train, test, train_size
 
+    @staticmethod
     def predict(train, test, p, d, q):
         """
         Use this function to predict only one single point(value at t+1)
         based on prior true history
-        :param train:
-        :param test:
-        :param p:
-        :param d:
-        :param q:
+        :param
+            train : Array of training data
+            test : Array of testing data
+            p : parameter p in ARIMA(p, d, q)
+            d : parameter d in ARIMA(p, d, q)
+            q : parameter q in ARIMA(p, d, q)
         :return:
+            test_predict : Array testing data
         """
         history = list(train)
         test_predict = []
@@ -35,15 +47,19 @@ class ArimaModel(object):
             print(i)
         return test_predict
 
+    @staticmethod
     def predict_future(train, test, p, d, q):
         """
-        Use this function to predict
+        Use this function to predict multiple value in the future
+        at time t+1, t+2, t+3, etc
         :param
-            test:
-            p:
-            d:
-            q:
+            train : Array - training data
+            test : Array testing data
+            p : parameter p in ARIMA(p, d, q)
+            d : parameter d in ARIMA(p, d, q)
+            q : parameter q in ARIMA(p, d, q)
         :return:
+            test_predict : Array testing data
         """
         history = list(train)
         test_predict = []
@@ -55,6 +71,7 @@ class ArimaModel(object):
             history.append(output[0])
             print(i)
         return test_predict
+
 
 if __name__ == '__main__':
     import math

@@ -15,11 +15,17 @@ class LstmModel(object):
     def transform_split(self, look_back=5, train_composition=0.7, use_time_step=True):
         """
 
-        :param
+        :param:
             look_back: (int) how many time steps required to predict
                             future value
             train_composition: (float > 0) percentage or index
+            use_time_step : (boolean) True
         :return:
+            train_x : rnn_matrix(see transform.py doc) training data
+            train_y : rnn_matrix(see transform.py doc) label data
+            test_x : 1D array test data
+            test_y : 1D array label test data
+            train_size : training size
         """
         if train_composition > 1 or train_composition < 0:
             raise Exception('Train composition must be between 0-1')
@@ -43,8 +49,10 @@ class LstmModel(object):
         :param
             layers : array of network structure
                     [input dim, LSTM 1st layer,
-                    LSTM second layer, normal layer to give the prediction]
+                    LSTM second layer, normal layer(final output) to give
+                    the prediction]
         :return:
+            model : LSTM keras model
         """
         model = Sequential()
 
@@ -79,32 +87,44 @@ class LstmModel(object):
     @staticmethod
     def fit(model, train_x, train_y, nb_epoch=100, batch_size=1, verbose=2):
         """
-
+        Fit function to train our model
         :param
-            model :
-            train_x :
-            train_y :
-            layers :
-            nb_epoch :
-            batch_size :
-            verbose :
+            model : LSTM keras model
+            train_x : rnn_matrix (nb of samples, nb of time step,
+                        nb of features) - training data
+            train_y : 1D array label data
+            nb_epoch : number of epoch (keras parameter)
+            batch_size : batch size (keras parameter)
+            verbose : (keras parameter)
         :return:
+            model : LSTM keras model
         """
         model.fit(train_x, train_y, nb_epoch, batch_size, verbose)
         return model
 
     def predict(self, model, test_x):
         """
-
+        Use this function to predict only one single point(value at t+1)
+        based on prior true history
+        :param
+            model : LSTM keras model
+            test_x : rnn_matrix (testing data)
         :return:
+            test_y = 1D array label data
         """
         test_predict = model.predict(test_x)
         return self.scaler.inverse_transform(test_predict)
 
     def predict_future(self, model, test_x):
         """
-
+        Use this function to predict multiple value in the future
+        at time t+1, t+2, t+3, etc
+        :param
+            model : LSTM keras model
+            test_x : rnn_matrix (testing data)
         :return:
+            test_y = 1D array label data
+
         """
         test_predict = []
         data = np.array([test_x[0]])

@@ -48,10 +48,11 @@ def features_matrix_to_rnn_matrix(fmatrix, use_time_step=True):
     :param
         f_matrix : features matrix
                 numpy array (len(series), look_back)
-                shape(nb of samples, nb of look back)
+                shape(nb of samples, nb of features)
         use_time_step : (boolean) True
     :return:
-        rnn_matrix :
+        rnn_matrix : numpy array
+                shape(nb of samples, nb of time step, nb of features)
     """
     if use_time_step:
         rnn_matrix = np.reshape(fmatrix, (fmatrix.shape[0], fmatrix.shape[1], 1))
