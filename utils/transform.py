@@ -23,7 +23,7 @@ def series_to_features_matrix(series, look_back):
 
 def features_matrix_to_rnn_matrix(fmatrix, use_time_step=True):
     """
-    LSTM RNN required an input with shape (nb of samples, nb of look back,
+    LSTM RNN requires an input with shape (nb of samples, nb of look back,
     nb of features). This function is used to transform features
     matrix (nb of samples, nb of features) into RNN matrix.
     If use_time_step equals to True, instead of phrasing the past
