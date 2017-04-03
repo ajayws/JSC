@@ -14,7 +14,7 @@ def series_to_features_matrix(series, look_back):
         y : response of the features
     """
     x, y = [], []
-    for i in range(len(series) - look_back - 1):
+    for i in range(len(series) - look_back):
         a = series[i:(i + look_back)]
         x.append(a)
         y.append(series[i + look_back])
@@ -59,3 +59,11 @@ def features_matrix_to_rnn_matrix(fmatrix, use_time_step=True):
     else:
         rnn_matrix = np.reshape(fmatrix, (fmatrix.shape[0], 1, fmatrix.shape[1]))
     return rnn_matrix
+
+
+if __name__ == '__main__':
+    l = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    X, Y = series_to_features_matrix(l, 3)
+    rnn_mat = features_matrix_to_rnn_matrix(X)
+    print(X)
+    print(rnn_mat)
