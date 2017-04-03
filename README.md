@@ -7,27 +7,27 @@ This project is supported by Jakarta Smart City and Data Science Indonesia.
 
 Requirements:
 
-Python	3.5
-Keras	1.2.2
-Tensorflow 1.0.0
-numpy	1.12.0
-scikit-learn 0.18.1
-statsmodels 0.8.0
-matplotlib 2.0.0
-beautifulsoup4 4.4.1
-urllib3 1.13.1
+Python	3.5<br>
+Keras	1.2.2<br>
+Tensorflow 1.0.0<br>
+numpy	1.12.0<br>
+scikit-learn 0.18.1<br>
+statsmodels 0.8.0<br>
+matplotlib 2.0.0<br>
+beautifulsoup4 4.4.1<br>
+urllib3 1.13.1<br>
 
-========================
-R 3.3
-dplyr
-leaflet
-mapdata
-ggplot2
-ggmap
-geojsonio
-maptools
-forecast
-xts
-tseries
-reshape
-corrplot
+========================<br>
+R 3.3<br>
+dplyr<br>
+leaflet<br>
+mapdata<br>
+ggplot2<br>
+ggmap<br>
+geojsonio<br>
+maptools<br>
+forecast<br>
+xts<br>
+tseries<br>
+reshape<br>
+corrplot<br>
