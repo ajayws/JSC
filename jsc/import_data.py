@@ -29,7 +29,7 @@ class RainfallData(object):
         """
         header, time_series = self._read_data()
         time, series = self._restructure_data(time_series)
-        rainfall = {'header': header,
+        rainfall = {'header': header[2:],
                     'time': time,
                     'series': series}
         return rainfall
@@ -69,4 +69,4 @@ if __name__ == '__main__':
     path = '../data/data_rainfall_final.csv'
     RD = RainfallData(path)
     rainfall_data = RD.load_data()
-    print(rainfall_data['series'][:, 0])
+    print(rainfall_data['header'])

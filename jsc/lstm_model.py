@@ -60,7 +60,6 @@ class LstmModel(object):
             input_dim=layers[0],
             output_dim=layers[1],
             return_sequences=True))
-
         model.add(Dropout(0.2))
 
         model.add(LSTM(
@@ -73,7 +72,7 @@ class LstmModel(object):
 
         model.add(Activation('tanh'))
 
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        model.compile(loss='mae', optimizer='adadelta')
         return model
 
     @staticmethod
@@ -81,6 +80,45 @@ class LstmModel(object):
         model = Sequential()
         model.add(LSTM(4, input_dim=1))
         model.add(Dense(1))
+        model.compile(loss='mean_squared_error', optimizer='adam')
+        return model
+
+    @staticmethod
+    def build_model3(layers):
+        """
+        Build LSTM Model consisting 5 layers
+        :param
+            layers : array of network structure
+                    [input dim, LSTM 1st layer,
+                    LSTM second layer, normal layer(final output) to give
+                    the prediction]
+        :return:
+            model : LSTM keras model
+        """
+        model = Sequential()
+
+        model.add(LSTM(
+            input_dim=layers[0],
+            output_dim=layers[1],
+            return_sequences=True))
+
+        model.add(Dropout(0.2))
+
+        model.add(LSTM(
+            layers[2],
+            return_sequences=True))
+        model.add(Dropout(0.2))
+
+        model.add(LSTM(
+            layers[3],
+            return_sequences=False))
+        model.add(Dropout(0.2))
+
+        model.add(Dense(
+            output_dim=layers[4]))
+
+        model.add(Activation('tanh'))
+
         model.compile(loss='mean_squared_error', optimizer='adam')
         return model
 
@@ -99,8 +137,8 @@ class LstmModel(object):
         :return:
             model : LSTM keras model
         """
-        model.fit(train_x, train_y, nb_epoch, batch_size, verbose)
-        return model
+        return model.fit(train_x, train_y, nb_epoch=nb_epoch,
+                         batch_size=batch_size, verbose=verbose)
 
     def predict(self, model, test_x):
         """
@@ -113,7 +151,7 @@ class LstmModel(object):
             test_y = 1D array label data
         """
         test_predict = model.predict(test_x)
-        return self.scaler.inverse_transform(test_predict)
+        return self.scaler.inverse_transform(test_predict.reshape(-1, 1))
 
     def predict_future(self, model, test_x):
         """
@@ -131,7 +169,7 @@ class LstmModel(object):
         nb_samples, row, col = test_x.shape
         for i in range(nb_samples):
             new_point = model.predict(data)
-            new_point = self.scaler.inverse_transform(new_point)[0]
+            new_point = self.scaler.inverse_transform(new_point.reshape(-1, 1))[0]
             test_predict.append(new_point)
             data = np.array([data[0][1:]])
             data = np.insert(data, row-1, new_point, 1)
@@ -153,23 +191,33 @@ if __name__ == '__main__':
     path = '../data/data_rainfall_final_clear.csv'
     RD = import_data.RainfallData(path)
     rainfall_data = RD.load_data()
-    pa = 3
+    pa = 0
     LM = LstmModel(rainfall_data['series'][:, pa])
-    lookBack = 10
-    trainX, trainY, testX, testY, trainSize = LM.transform_split(lookBack, 0.80)
+    lookBack = 3
+    trainX, trainY, testX, testY, trainSize = LM.transform_split(lookBack, 0.999, False)
     print(testX.shape)
-    modelLm = LM.build_model([1, 50, 100, 1])
+    modelLm = LM.build_model3([3, 30, 100, 50, 1])
+    # modelLm = LM.build_model([lookBack, 100, 50, 1])
     # modelLm = LM.build_model2()
-    modelLm = LM.fit(modelLm, trainX, trainY, 100, 10)
-    testPredict = LM.predict(modelLm, testX)
-    print(testPredict.shape, rainfall_data['series'][trainSize+lookBack+1:, pa].shape)
+    history = LM.fit(modelLm, trainX, trainY, 5, 12)
+    testPredict = LM.predict_future(modelLm, testX)
+    print(testPredict.shape, rainfall_data['series'][trainSize:, pa].shape)
     test_score = math.sqrt(mean_squared_error(
-        rainfall_data['series'][trainSize+lookBack+1:, pa], testPredict))
-    plt.plot(rainfall_data['time'][trainSize+lookBack+1:],
-             rainfall_data['series'][trainSize+lookBack+1:, pa], label='Real Data')
-    plt.plot(rainfall_data['time'][trainSize+lookBack+1:], testPredict, label='Prediction')
-    plt.title('Pintu Air Karet')
+        rainfall_data['series'][trainSize+lookBack:, pa], testPredict))
+    plt.plot(rainfall_data['time'][trainSize+lookBack:],
+             rainfall_data['series'][trainSize+lookBack:, pa], label='Real Data')
+    plt.plot(rainfall_data['time'][trainSize+lookBack:], testPredict, label='Prediction')
+    plt.title(rainfall_data['header'][pa])
     plt.xlabel('Time')
     plt.ylabel('Water Level(cm)')
     plt.show()
+    '''
+    # summarize history for loss
+    plt.plot(LM.scaler.inverse_transform(history.history['loss']).reshape(-1, 1))
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.show()
+    '''
     print(test_score)
+    #print(rainfall_data['series'][trainSize+lookBack:, pa], testPredict)

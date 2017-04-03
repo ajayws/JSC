@@ -82,10 +82,10 @@ if __name__ == '__main__':
     path = '../data/data_rainfall_final_clear.csv'
     RD = import_data.RainfallData(path)
     rainfall_data = RD.load_data()
-    pa = 2
+    pa = 11
     AM = ArimaModel(rainfall_data['series'][:, pa])
-    trainD, testD, trainSize = AM.transform_split(0.8)
-    testPredict = AM.predict(trainD, testD, 3, 0, 0)
+    trainD, testD, trainSize = AM.transform_split(0.999)
+    testPredict = AM.predict(trainD, testD, 2, 0, 0)
     print(len(testPredict))
     print(len(rainfall_data['series'][trainSize:, pa]))
     test_score = math.sqrt(mean_squared_error(
@@ -93,9 +93,9 @@ if __name__ == '__main__':
     plt.plot(rainfall_data['time'][trainSize:],
              rainfall_data['series'][trainSize:, pa], label='Real Data')
     plt.plot(rainfall_data['time'][trainSize:], testPredict, label='Prediction')
-    plt.show()
-    plt.title('Pintu Air Manggarai')
+    plt.title(rainfall_data['header'][pa])
     plt.xlabel('Time')
     plt.ylabel('Water Level(cm)')
-    print(testPredict[1:10])
+    plt.show()
+    print(rainfall_data['series'][trainSize:, pa], testPredict)
     print(test_score)
