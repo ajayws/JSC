@@ -5,12 +5,12 @@ from datetime import datetime
 from utils import cast
 
 
-class RainfallData(object):
+class WaterlevelData(object):
     def __init__(self, filename):
         """
         :param
             filename: string of path and filename
-                    ex: '../data/data_rainfall_final.csv'
+                    ex: '../data/data_waterlevel_final.csv'
         """
         datafile = Path(filename)
         if datafile.is_file():
@@ -20,28 +20,28 @@ class RainfallData(object):
 
     def load_data(self):
         """
-        function to load rainfall data from csv
+        function to load waterlevel data from csv
         :return:
-            rainfall : dictionary
+            waterlevel : dictionary
                         {'header' : column name,
                         'timestamp': datetime,
-                        'series': rainfall series from 11 water gauges}
+                        'series': waterlevel series from 11 water gauges}
         """
         header, time_series = self._read_data()
         time, series = self._restructure_data(time_series)
-        rainfall = {'header': header[2:],
+        waterlevel = {'header': header[2:],
                     'time': time,
                     'series': series}
-        return rainfall
+        return waterlevel
 
     def _restructure_data(self, time_series):
         """
-        seperate datetime and the series into 2 variable
+        separate datetime and the series into 2 variable
         :param
-            time_series: list of date, time, and rainfall data
+            time_series: list of date, time, and waterlevel data
         :return:
             timestamp = datetime list
-            series = (numpy array float) rainfall value at the time
+            series = (numpy array float) waterlevel value at the time
         """
         time = []
         series = []
@@ -66,7 +66,7 @@ class RainfallData(object):
         return header, time_series
 
 if __name__ == '__main__':
-    path = '../data/data_rainfall_final.csv'
-    RD = RainfallData(path)
-    rainfall_data = RD.load_data()
-    print(rainfall_data['header'])
+    path = '../data/data_waterlevel_final.csv'
+    RD = WaterlevelData(path)
+    waterlevel_data = RD.load_data()
+    print(waterlevel_data['header'])

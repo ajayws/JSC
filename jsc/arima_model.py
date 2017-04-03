@@ -79,23 +79,23 @@ if __name__ == '__main__':
     from jsc import import_data
     from sklearn.metrics import mean_squared_error
 
-    path = '../data/data_rainfall_final_clear.csv'
-    RD = import_data.RainfallData(path)
-    rainfall_data = RD.load_data()
+    path = '../data/data_waterlevel_final_clear.csv'
+    RD = import_data.WaterlevelData(path)
+    waterlevel_data = RD.load_data()
     pa = 11
-    AM = ArimaModel(rainfall_data['series'][:, pa])
+    AM = ArimaModel(waterlevel_data['series'][:, pa])
     trainD, testD, trainSize = AM.transform_split(0.999)
     testPredict = AM.predict(trainD, testD, 2, 0, 0)
     print(len(testPredict))
-    print(len(rainfall_data['series'][trainSize:, pa]))
+    print(len(waterlevel_data['series'][trainSize:, pa]))
     test_score = math.sqrt(mean_squared_error(
-        rainfall_data['series'][trainSize:, pa], testPredict))
-    plt.plot(rainfall_data['time'][trainSize:],
-             rainfall_data['series'][trainSize:, pa], label='Real Data')
-    plt.plot(rainfall_data['time'][trainSize:], testPredict, label='Prediction')
-    plt.title(rainfall_data['header'][pa])
+        waterlevel_data['series'][trainSize:, pa], testPredict))
+    plt.plot(waterlevel_data['time'][trainSize:],
+             waterlevel_data['series'][trainSize:, pa], label='Real Data')
+    plt.plot(waterlevel_data['time'][trainSize:], testPredict, label='Prediction')
+    plt.title(waterlevel_data['header'][pa])
     plt.xlabel('Time')
     plt.ylabel('Water Level(cm)')
     plt.show()
-    print(rainfall_data['series'][trainSize:, pa], testPredict)
+    print(waterlevel_data['series'][trainSize:, pa], testPredict)
     print(test_score)

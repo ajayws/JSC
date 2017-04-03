@@ -188,11 +188,11 @@ if __name__ == '__main__':
     from jsc import import_data
     from sklearn.metrics import mean_squared_error
 
-    path = '../data/data_rainfall_final_clear.csv'
-    RD = import_data.RainfallData(path)
-    rainfall_data = RD.load_data()
+    path = '../data/data_waterlevel_final_clear.csv'
+    RD = import_data.WaterlevelData(path)
+    waterlevel_data = RD.load_data()
     pa = 0
-    LM = LstmModel(rainfall_data['series'][:, pa])
+    LM = LstmModel(waterlevel_data['series'][:, pa])
     lookBack = 3
     trainX, trainY, testX, testY, trainSize = LM.transform_split(lookBack, 0.999, False)
     print(testX.shape)
@@ -201,13 +201,13 @@ if __name__ == '__main__':
     # modelLm = LM.build_model2()
     history = LM.fit(modelLm, trainX, trainY, 5, 12)
     testPredict = LM.predict_future(modelLm, testX)
-    print(testPredict.shape, rainfall_data['series'][trainSize:, pa].shape)
+    print(testPredict.shape, waterlevel_data['series'][trainSize:, pa].shape)
     test_score = math.sqrt(mean_squared_error(
-        rainfall_data['series'][trainSize+lookBack:, pa], testPredict))
-    plt.plot(rainfall_data['time'][trainSize+lookBack:],
-             rainfall_data['series'][trainSize+lookBack:, pa], label='Real Data')
-    plt.plot(rainfall_data['time'][trainSize+lookBack:], testPredict, label='Prediction')
-    plt.title(rainfall_data['header'][pa])
+        waterlevel_data['series'][trainSize+lookBack:, pa], testPredict))
+    plt.plot(waterlevel_data['time'][trainSize+lookBack:],
+             waterlevel_data['series'][trainSize+lookBack:, pa], label='Real Data')
+    plt.plot(waterlevel_data['time'][trainSize+lookBack:], testPredict, label='Prediction')
+    plt.title(waterlevel_data['header'][pa])
     plt.xlabel('Time')
     plt.ylabel('Water Level(cm)')
     plt.show()
@@ -220,4 +220,4 @@ if __name__ == '__main__':
     plt.show()
     '''
     print(test_score)
-    #print(rainfall_data['series'][trainSize+lookBack:, pa], testPredict)
+    #print(waterlevel_data['series'][trainSize+lookBack:, pa], testPredict)
