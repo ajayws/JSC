@@ -9,6 +9,7 @@ head(data.air)
 data.air$Date <- as.Date(data.air$Date, format = "%d/%m/%Y")
 data.air$DateTime = paste(data.air$Date, data.air$Time, sep = " ")
 
+#test stationary using adf and kpss method
 for (i in 3:14)
 {
   series = as.data.frame(cbind(data.air[,15], data.air[,i]))
@@ -32,6 +33,7 @@ acf(ts.bk)
 
 a <- ts(series)
 
+#correlation plot
 auto.arima(series$V2)
 M <- cor(data.air[,-c(1,2, 10)])
 corrplot.mixed(M)
